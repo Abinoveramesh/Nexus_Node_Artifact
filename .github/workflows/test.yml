@@ -28,7 +28,6 @@ jobs:
         run: |
           # Create the artifact in the specified directory
           tar -czf node-app-artifact.tar.gz public server.js package.json package-lock.json
-          mv node-app-artifact.tar.gz /var/www/html/practices/Nexus_Node_Artifact/artifact/  # Move it to the correct location
 
       - name: Upload to Nexus
         run: |
