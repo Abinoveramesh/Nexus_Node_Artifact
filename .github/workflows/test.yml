@@ -1,0 +1,37 @@
+name: Upload Artifact to Nexus
+
+on:
+  push:
+    branches:
+      - main  # Change this if your default branch is different
+
+jobs:
+  upload-artifact:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Change to your Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build  # Ensure this is set in your package.json if necessary
+
+      - name: Create artifact file
+        run: |
+          # Create the artifact in the specified directory
+          tar -czf node-app-artifact.tar.gz public server.js package.json package-lock.json
+          mv node-app-artifact.tar.gz /var/www/html/practices/Nexus_Node_Artifact/artifact/  # Move it to the correct location
+
+      - name: Upload to Nexus
+        run: |
+          curl -v -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
+          --upload-file /var/www/html/practices/Nexus_Node_Artifact/artifact/node-app-artifact.tar.gz \
+          "http://your-nexus-server:8081/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz"
