@@ -26,11 +26,14 @@ jobs:
 
       - name: Create artifact file
         run: |
-          # Create the artifact in the specified directory
+          # Create the artifact in the temporary directory
           tar -czf node-app-artifact.tar.gz public server.js package.json package-lock.json
+          echo "Artifact created:"
+          ls -lh node-app-artifact.tar.gz  # List the file to confirm it was created
 
       - name: Upload to Nexus
         run: |
+          # Upload the artifact to Nexus
           curl -v -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
-          --upload-file /var/www/html/practices/Nexus_Node_Artifact/artifact/node-app-artifact.tar.gz \
+          --upload-file node-app-artifact.tar.gz \
           "http://your-nexus-server:8081/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz"
