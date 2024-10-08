@@ -34,6 +34,13 @@ jobs:
       - name: Upload to Nexus
         run: |
           # Upload the artifact to Nexus using the public URL
-          curl -v -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
+          response=$(curl -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
           --upload-file node-app-artifact.tar.gz \
-          "https://sw1l5lss-8081.inc1.devtunnels.ms/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz"
+          "https://sw1l5lss-8081.inc1.devtunnels.ms/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz" -w "%{http_code}" -o /dev/null)
+
+          if [ "$response" -eq 201 ]; then
+            echo "Artifact uploaded successfully!"
+          else
+            echo "Failed to upload artifact. HTTP response code: $response"
+            exit 1
+          fi
