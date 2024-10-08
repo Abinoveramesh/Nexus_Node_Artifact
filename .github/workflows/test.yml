@@ -30,13 +30,16 @@ jobs:
           tar -czf node-app-artifact.tar.gz public server.js package.json package-lock.json
           echo "Artifact created:"
           ls -lh node-app-artifact.tar.gz  # List the file to confirm it was created
-
+          
       - name: Upload to Nexus
         run: |
           # Upload the artifact to Nexus using the public URL
           response=$(curl -u ${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }} \
           --upload-file node-app-artifact.tar.gz \
-          "https://sw1l5lss-8081.inc1.devtunnels.ms/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz" -w "%{http_code}" -o /dev/null)
+          "https://sw1l5lss-8081.inc1.devtunnels.ms/repository/Nexus-artifact-test/com/example/node-app-artifact/1.0.0/node-app-artifact-1.0.0.tar.gz" -w "%{http_code}" -o response.txt)
+
+          echo "Response from Nexus:"
+          cat response.txt  # Print response for more context
 
           if [ "$response" -eq 201 ]; then
             echo "Artifact uploaded successfully!"
